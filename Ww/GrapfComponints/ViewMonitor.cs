@@ -59,9 +59,14 @@ namespace Ww.GrapfComponints
             }
             catch { }
 
-            e.Graphics.Flush();
+            e.Graphics.Flush();            
             e.Graphics.DrawImage(LastFrame.Image, 0, 0);
+            DrawDebug(e.Graphics);
+        }
 
+        private void DrawDebug(Graphics graphics)
+        {
+            graphics.DrawString($"MaxFPS:{FPS}",Font, Brushes.Blue,0,0);
         }
 
         internal void PushFrame(Frame frame)

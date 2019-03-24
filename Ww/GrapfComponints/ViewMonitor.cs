@@ -16,6 +16,7 @@ namespace Ww.GrapfComponints
         Queue<Frame> Frames = new Queue<Frame>();
         System.Threading.Timer Timer;
         private int _fps = 30;
+        private int frameCount;
 
         public Frame LastFrame { get; private set; } = Frame.Empty;
 
@@ -44,8 +45,7 @@ namespace Ww.GrapfComponints
         private void Monitor_Paint(object sender, PaintEventArgs e)
         {
             if (DesignMode)
-                return;
-           
+                return;          
 
             try
             {
@@ -58,15 +58,21 @@ namespace Ww.GrapfComponints
                 }
             }
             catch { }
-
-            e.Graphics.Flush();            
+                
             e.Graphics.DrawImage(LastFrame.Image, 0, 0);
             DrawDebug(e.Graphics);
+
+            if (frameCount++>100)
+            {
+                GC.Collect();               
+                frameCount = 0;
+
+            }
         }
 
         private void DrawDebug(Graphics graphics)
         {
-            graphics.DrawString($"MaxFPS:{FPS}",Font, Brushes.Blue,0,0);
+            graphics.DrawString($"MaxFPS:{FPS} fC:{frameCount}",Font, Brushes.Blue,0,0);
         }
 
         internal void PushFrame(Frame frame)

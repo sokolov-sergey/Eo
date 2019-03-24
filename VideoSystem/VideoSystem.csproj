@@ -43,11 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Driver.cs" />
     <Compile Include="Frame.cs" />
+    <Compile Include="IDriver.cs" />
     <Compile Include="IViewPort.cs" />
     <Compile Include="MouseCaptureVideoPort.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldVideoPort.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\World.Maps\World.Maps.csproj">
+      <Project>{B799752A-33D4-45DE-ACA8-CA50053CFE12}</Project>
+      <Name>World.Maps</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

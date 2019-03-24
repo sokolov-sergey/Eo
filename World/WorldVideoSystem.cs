@@ -1,5 +1,6 @@
 ﻿
 using VideoSystem;
+using World.Maps;
 
 namespace World
 {
@@ -7,9 +8,9 @@ namespace World
     {
         private IViewPort VideoPort;
 
-        public WorldVideoSystem()
+        public WorldVideoSystem(IMap map)
         {
-            VideoPort = new WorldVideoPort();
+            VideoPort = new WorldVideoPort(map);
         }
 
         internal IViewPort GetViewPort()

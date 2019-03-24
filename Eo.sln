@@ -5,13 +5,15 @@ VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ww", "Ww\Ww.csproj", "{32B18220-D663-4C10-AEA8-828E25A4DBED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "World", "World\World.csproj", "{CECF6DCD-4F9C-4CCD-8750-D0246EF367B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "World", "World\World.csproj", "{CECF6DCD-4F9C-4CCD-8750-D0246EF367B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoSystem", "VideoSystem\VideoSystem.csproj", "{30B68559-6495-4A19-821F-930BF45FAADC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra", "Infra", "{7854B039-75BD-47A1-A589-1D34C8FE5AE1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Life", "Life", "{AC3A128A-3147-4635-BA65-AF4252C43093}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "World.Maps", "World.Maps\World.Maps.csproj", "{B799752A-33D4-45DE-ACA8-CA50053CFE12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{30B68559-6495-4A19-821F-930BF45FAADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30B68559-6495-4A19-821F-930BF45FAADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30B68559-6495-4A19-821F-930BF45FAADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B799752A-33D4-45DE-ACA8-CA50053CFE12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B799752A-33D4-45DE-ACA8-CA50053CFE12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B799752A-33D4-45DE-ACA8-CA50053CFE12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B799752A-33D4-45DE-ACA8-CA50053CFE12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

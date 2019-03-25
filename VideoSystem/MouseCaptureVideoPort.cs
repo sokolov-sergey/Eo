@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace VideoSystem
 {
 
-    public class MouseCaptureVideoPort : IViewPort
+    public class MouseCaptureVideoPort //: IViewPort
     {
         private Point prevPos;
         private Point point;
@@ -67,6 +67,16 @@ namespace VideoSystem
         public void ProvideFrames(Action<Frame> action)
         {
             FrameHandler = action;
+        }
+
+        public void ZoomIn(int x = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetDeviceSize(int width, int height)
+        {
+            throw new NotImplementedException();
         }
     }
 }

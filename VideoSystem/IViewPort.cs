@@ -10,5 +10,8 @@ namespace VideoSystem
     {
         void ProvideFrames(Action<Frame> action);
         int MaxFPS { get; }
+
+        void ZoomIn(int x=0);
+        void SetDeviceSize(int width, int height);
     }
 }

@@ -8,22 +8,31 @@ namespace VideoSystem
     public class WorldVideoPort : IViewPort
     {
         private Timer Timer;
-        IDriver Driver;
+        IViewDriver Driver;
+
+        Size DeviceSize = new Size(800,600);
+
 
         public WorldVideoPort(IMap map)
         {
-            Driver = new Driver(map);
+            Driver = new ViewDriver(map);
 
-            Timer = new Timer(TickHadler, null, 100, 1000 / MaxFPS + 5);
+            Timer = new Timer(TickHadler, null, 1000, 1000 / MaxFPS + 5);
         }
+
+        
 
         private void TickHadler(object state)
         {
-            var bitmap = new Bitmap(800, 600);
+            var bitmap = new Bitmap(DeviceSize.Width, DeviceSize.Height);
             var g = Graphics.FromImage(bitmap);
 
             Driver.DrawMap(g);
+            Driver.DrawEnvironment(g);
 
+            Driver.DrawCells(g);
+
+            Driver.DrawDebug(g);
 
             FrameHandler(new Frame(bitmap));
         }
@@ -35,6 +44,16 @@ namespace VideoSystem
         public void ProvideFrames(Action<Frame> action)
         {
             FrameHandler = action;
+        }
+
+        public void ZoomIn(int x=0)
+        {
+            Driver.ZoomIn(x);
+        }
+
+        public void SetDeviceSize(int width, int height)
+        {
+            DeviceSize = new Size(width, height);
         }
     }
 }

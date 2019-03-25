@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra", "Infra", "{7854B039
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Life", "Life", "{AC3A128A-3147-4635-BA65-AF4252C43093}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "World.Maps", "World.Maps\World.Maps.csproj", "{B799752A-33D4-45DE-ACA8-CA50053CFE12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "World.Maps", "World.Maps\World.Maps.csproj", "{B799752A-33D4-45DE-ACA8-CA50053CFE12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Life.Cell", "Life.Cell\Life.Cell.csproj", "{64C8960D-1602-48E3-9234-3F128FD3AE1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{B799752A-33D4-45DE-ACA8-CA50053CFE12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B799752A-33D4-45DE-ACA8-CA50053CFE12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B799752A-33D4-45DE-ACA8-CA50053CFE12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64C8960D-1602-48E3-9234-3F128FD3AE1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64C8960D-1602-48E3-9234-3F128FD3AE1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64C8960D-1602-48E3-9234-3F128FD3AE1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64C8960D-1602-48E3-9234-3F128FD3AE1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{32B18220-D663-4C10-AEA8-828E25A4DBED} = {7854B039-75BD-47A1-A589-1D34C8FE5AE1}
 		{30B68559-6495-4A19-821F-930BF45FAADC} = {7854B039-75BD-47A1-A589-1D34C8FE5AE1}
+		{64C8960D-1602-48E3-9234-3F128FD3AE1A} = {AC3A128A-3147-4635-BA65-AF4252C43093}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {35EBA260-B5AC-4F5E-B2CF-DBC6CFD233C5}

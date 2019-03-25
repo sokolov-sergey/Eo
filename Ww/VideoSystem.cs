@@ -13,7 +13,7 @@ namespace Ww
     {
         public static IViewPort GetViewPort()
         {
-            return new MouseCaptureVideoPort();
+            return (IViewPort)new MouseCaptureVideoPort();
             
         }
     }

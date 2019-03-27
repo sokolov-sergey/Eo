@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace VideoSystem
 {
-    internal interface IViewDriver
+    public interface IViewDriver
     {
         void DrawMap(System.Drawing.Graphics graphics);
         void DrawEnvironment(System.Drawing.Graphics g);

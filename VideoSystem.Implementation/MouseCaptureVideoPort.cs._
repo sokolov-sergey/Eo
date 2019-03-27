@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace VideoSystem
+namespace VideoSystem.Implementation
 {
-
+    
     public class MouseCaptureVideoPort //: IViewPort
     {
         private Point prevPos;

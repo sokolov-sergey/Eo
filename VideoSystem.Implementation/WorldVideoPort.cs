@@ -3,12 +3,12 @@ using System.Drawing;
 using System.Threading;
 using World.Maps;
 
-namespace VideoSystem
+namespace VideoSystem.Implementation
 {
     public class WorldVideoPort : IViewPort
     {
         private Timer Timer;
-        IViewDriver Driver;
+        private IViewDriver Driver;
 
         Size DeviceSize = new Size(800,600);
 

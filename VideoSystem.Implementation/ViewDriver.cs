@@ -1,10 +1,9 @@
-﻿using Life.Cell;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using World.Maps;
 
-namespace VideoSystem
+namespace VideoSystem.Implementation
 {
     internal class ViewDriver : IViewDriver
     {

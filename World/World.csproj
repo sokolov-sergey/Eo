@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VideoSystem\VideoSystem.csproj" />
-    <ProjectReference Include="..\World.Maps\World.Maps.csproj" />
   </ItemGroup>
 
 </Project>

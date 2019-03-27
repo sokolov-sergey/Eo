@@ -9,7 +9,7 @@ using Ww.GrapfComponints;
 
 namespace Ww
 {
-    internal class VideoSystem
+    public class VideoSystem
     {
         public static IViewPort GetViewPort()
         {

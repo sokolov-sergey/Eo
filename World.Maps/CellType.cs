@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Life.Cell
+namespace World.Maps
 {
     [Flags]
     public enum CellType : int

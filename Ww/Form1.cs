@@ -24,9 +24,14 @@ namespace Ww
             ViewPort.SetDeviceSize(monitor1.Width, monitor1.Height);
             monitor1.FPS = ViewPort.MaxFPS;
             monitor1.Resize += Monitor1_Resize;
+            monitor1.KeyDown += Monitor1_KeyDown;
 
         }
 
+        private void Monitor1_KeyDown(object sender, KeyEventArgs e)
+        {
+            Environment.RandomSettle();
+        }
 
         private void Monitor1_Resize(object sender, EventArgs e)
         {

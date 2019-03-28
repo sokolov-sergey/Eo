@@ -4,8 +4,6 @@ namespace World.Maps
 {
     public class Map : IMap
     {
-
-
         public Map(int height, int width)
         {
             Height = height;
@@ -16,9 +14,9 @@ namespace World.Maps
         }
 
         private void InitDefaultCells()
-        {   
-            for (int x = 0; x < Width - 1; x++)
-                for (int y = 0; y < Height - 1; y++)
+        {
+            for (int x = 0; x < Width; x++)
+                for (int y = 0; y < Height; y++)
                 {
                     Cells[x, y] = new Cell(CellType.Empty, x, y);
                 }
@@ -28,5 +26,7 @@ namespace World.Maps
         public int Width { get; private set; }
 
         public Cell[,] Cells { get; private set; }
+
+        public Cell this[int x, int y] { get => Cells[x, y]; set => Cells[x,y]= value; }
     }
 }

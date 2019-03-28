@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using VideoSystem;
 using VideoSystem.Implementation;
 using World.Maps;
+using World.Settlers;
+using World.Settlers.Plants;
 
 namespace World
 {
@@ -24,16 +26,25 @@ namespace World
 
             CurrentVideoSystem = new WorldVideoSystem(Map);
 
-            InitialSettle();
+            PopulateInitial();
         }
 
 
-        private void InitialSettle()
+        private void PopulateInitial()
         {
-            God.SettleCell(GetRandomCell(), null);
+            var (x, y) = RndXY;
+
+            var s = CreateASettler(null);
+
+            God.PopulateCell(x, y, s);
 
             /*     var ac = new AliveCell();
                  ac.TakeCell(ref Map.Cells[30, 30]);*/
+        }
+
+        private ISettler CreateASettler(object p)
+        {
+            return new Plant();
         }
 
         private Cell GetRandomCell()
@@ -44,20 +55,21 @@ namespace World
 
         public void RandomSettle()
         {
-            /* Task.Run(() =>
-             {
-                 var ac = new AliveCell();
-                 var x = Randomizer.Next(0, 99);
-                 var y = Randomizer.Next(0, 99);
-                 ac.TakeCell(ref Map.Cells[x, y]);
-                 Thread.Sleep(1000);
-                 return new int[2] { x, y };
+            return;
 
-             }).ContinueWith(t =>
-             {
-                 var res = t.Result;
-                 Map.Cells[res[0], res[1]] = default(Cell);
-             });*/
+            ThreadPool.QueueUserWorkItem(
+                s =>
+                {
+                    var c = GetRandomCell();
+                    if (c.CellType == CellType.Wall)
+                        return;
+
+                    c.CellType = CellType.Wall;
+                    Map.Cells[c.X, c.Y] = c;
+                    Thread.Sleep((int)s);
+                    Map.Cells[c.X, c.Y] = default(Cell);
+                },
+                Randomizer.Next(10000));
         }
 
         public IViewPort GetViewPort()

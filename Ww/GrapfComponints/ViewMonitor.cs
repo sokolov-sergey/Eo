@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VideoSystem;
@@ -17,15 +18,18 @@ namespace Ww.GrapfComponints
         System.Threading.Timer Timer;
         private int _fps = 30;
         private int frameCount;
+        private object drawLocker = new object();
+        private int flag = 0;
 
         public Frame LastFrame { get; private set; } = Frame.Empty;
 
         public int FPS
         {
             get => _fps;
-            set {
+            set
+            {
 
-                Timer.Change(1000, 1000/FPS);
+                Timer.Change(1000, 1000 / FPS);
                 _fps = value;
             }
         }
@@ -45,26 +49,36 @@ namespace Ww.GrapfComponints
         private void Monitor_Paint(object sender, PaintEventArgs e)
         {
             if (DesignMode)
-                return;          
+                return;
 
-            try
+            if (Interlocked.CompareExchange(ref flag, 1, 0) == 0)
             {
-                Frame f = Frames.Dequeue();
-
-                if (f != null)
+                try
                 {
-                    LastFrame.Image.Dispose();
-                    LastFrame = f;
-                }
-            }
-            catch { }
-                
-            e.Graphics.DrawImage(LastFrame.Image, 0, 0);
-            DrawDebug(e.Graphics);
+                    Frame f = Frame.Empty;
 
-            if (frameCount++>100)
+                    if (Frames.Count > 0)
+                        f = Frames.Dequeue();
+
+                    if (!f.IsEmpty)
+                    {                        
+                        LastFrame = f;
+                    }
+                }
+                catch { }
+
+                lock (drawLocker)
+                {
+
+                    e.Graphics.DrawImage((Image)LastFrame.Image.Clone(), 0, 0);
+                    DrawDebug(e.Graphics);
+                }
+                Interlocked.Decrement(ref flag);
+            }
+
+            if (frameCount++ > 100)
             {
-                GC.Collect();               
+                GC.Collect();
                 frameCount = 0;
 
             }
@@ -72,7 +86,7 @@ namespace Ww.GrapfComponints
 
         private void DrawDebug(Graphics graphics)
         {
-            graphics.DrawString($"MaxFPS:{FPS} fC:{frameCount}",Font, Brushes.Blue,0,0);
+            graphics.DrawString($"MaxFPS:{FPS} fC:{frameCount}", Font, Brushes.Blue, 0, 0);
         }
 
         internal void PushFrame(Frame frame)

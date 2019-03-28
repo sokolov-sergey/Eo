@@ -9,7 +9,7 @@ namespace World.Maps
 
         Lifeless = 1,
 
-        Type1 = 2,
+        Wall = 2,
         Type4 = 4,
         Type8 = 8,
         Type10 = 0x10,
@@ -17,15 +17,15 @@ namespace World.Maps
         Type40 = 0x40,
         Type80 = 0x80,
 
-        Alive = 0x100,        
-        SingleCell = 0x200,
-        MultyCell = 0x400,
+        Alive = 0x1000,
+        SingleCell = 0x2000,
+        MultyCell = 0x4000,
 
-        Type800 =  0x800,
-        Type1000 = 0x1000,
-        Type2000 = 0x2000,
-        Type4000 = 0x4000,
-        Type8000 = 0x8000,
+        Plant = 0x8000,
+        Type10000 = 0x10000,
+        Type20000 = 0x20000,
+        Type40000 = 0x40000,
+        Type80000 = 0x80000,
 
 
 

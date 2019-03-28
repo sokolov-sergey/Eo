@@ -103,16 +103,25 @@ namespace VideoSystem.Implementation
 
         private Brush CelltoBrush(Cell cell)
         {
-            return Brushes.Transparent;
+            var b = Brushes.Transparent;
+
+            if (cell.CellType != CellType.Empty)
+                b = new SolidBrush(Color.FromArgb(cell.Color));
+
+            return b;
         }
 
         private Pen CellToPen(Cell cell)
         {
+            var pen = Pens.Transparent;
             if (cell.CellType == CellType.Alive)
-                return Pens.White;
+                pen = Pens.White;
+
+            if (cell.CellType == CellType.Wall)
+                pen = Pens.Black;
 
 
-            return Pens.Transparent;
+            return pen;
         }
     }
 }

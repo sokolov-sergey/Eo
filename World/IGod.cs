@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using World.Maps;
+using World.Settlers;
 
 namespace World
 {
     public interface IGod
     {
-        void SettleCell(Cell cell, object p);
+        void PopulateCell(int x,int y, ISettler p);
     }
 }

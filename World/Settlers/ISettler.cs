@@ -1,4 +1,5 @@
-﻿using World.Maps;
+﻿using Akka.Actor;
+using World.Maps;
 
 namespace World.Settlers
 {
@@ -6,5 +7,8 @@ namespace World.Settlers
     {
         Cell Cell { get; set; }
         IMap Map { get; set; }
+        IActorRef Soul{get;}
+
+        ISettler SparkSoul(ActorSystem spark);
     }
 }

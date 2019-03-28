@@ -10,9 +10,9 @@ namespace VideoSystem.Implementation
         private readonly IMap Map;
         private Size PhysicalSize;
         private Rectangle MapBorder;
-        private LinearGradientBrush MapBg;
+        private Brush MapBg;
         private readonly int MinCellScale = 3;
-        private int Scale = 3;
+        private int Scale = 9;
         private readonly Font debugFont = new Font(FontFamily.GenericMonospace, 8);
         private readonly Random Randomizer = new Random();
 
@@ -31,6 +31,7 @@ namespace VideoSystem.Implementation
             MapBg = new LinearGradientBrush(
                 new Point(MapBorder.Width / 2, 0), new Point(MapBorder.Width / 2, MapBorder.Height),
                 Color.LightSeaGreen, Color.DarkSlateBlue);
+
         }
 
         public void DrawMap(Graphics g)
@@ -40,6 +41,7 @@ namespace VideoSystem.Implementation
 
         public void DrawEnvironment(Graphics g)
         {
+            return;
             Rectangle[] rects = new Rectangle[Map.Width * Map.Height];
             //   var filledIdx = Randomizer.Next(0, rects.Length);
 
@@ -74,7 +76,7 @@ namespace VideoSystem.Implementation
 
         public void DrawDebug(Graphics g)
         {
-            g.DrawString($"Sx{Scale}", debugFont, Brushes.DarkOrange, 0, MapBorder.Height - 11);
+            g.DrawString($"Sx{Scale}", debugFont, Brushes.DarkOrange, 100,  0);
         }
 
         public void DrawCells(Graphics g)
@@ -89,12 +91,13 @@ namespace VideoSystem.Implementation
 
         private void DrawCell(Cell cell, Graphics g)
         {
+            int margin = (Scale / MinCellScale) / 3;
             if (cell.CellType == CellType.Empty)
                 return;
 
             var pen = CellToPen(cell);
             var brush = CelltoBrush(cell);
-            var rect = new Rectangle(cell.X * Scale, cell.Y * Scale, Scale, Scale);
+            var rect = new Rectangle((cell.X * Scale), (cell.Y * Scale), Scale - margin, Scale - margin);
 
             g.FillRectangle(brush, rect);
             g.DrawRectangle(pen, rect);
@@ -114,8 +117,10 @@ namespace VideoSystem.Implementation
         private Pen CellToPen(Cell cell)
         {
             var pen = Pens.Transparent;
-            if (cell.CellType == CellType.Alive)
-                pen = Pens.White;
+
+            if ((cell.CellType & CellType.Alive) == CellType.Alive)
+                pen = new Pen(Color.FromArgb(cell.Color));
+
 
             if (cell.CellType == CellType.Wall)
                 pen = Pens.Black;

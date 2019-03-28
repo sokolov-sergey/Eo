@@ -51,7 +51,7 @@ namespace Ww.GrapfComponints
             if (DesignMode)
                 return;
 
-            if (Interlocked.CompareExchange(ref flag, 1, 0) == 0)
+           // if (Interlocked.CompareExchange(ref flag, 1, 0) == 0)
             {
                 try
                 {
@@ -61,19 +61,18 @@ namespace Ww.GrapfComponints
                         f = Frames.Dequeue();
 
                     if (!f.IsEmpty)
-                    {                        
+                    {
                         LastFrame = f;
                     }
                 }
                 catch { }
 
-                lock (drawLocker)
-                {
 
-                    e.Graphics.DrawImage((Image)LastFrame.Image.Clone(), 0, 0);
-                    DrawDebug(e.Graphics);
-                }
-                Interlocked.Decrement(ref flag);
+
+                e.Graphics.DrawImage((Image)LastFrame.Image.Clone(), 0, 0);
+                DrawDebug(e.Graphics);
+
+               // Interlocked.Decrement(ref flag);
             }
 
             if (frameCount++ > 100)

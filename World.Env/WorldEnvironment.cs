@@ -21,7 +21,7 @@ namespace World
 
         public WorldEnvironment()
         {
-            Map = new Map(height: 100, width: 100);
+            Map = new Map(height: 20, width: 20);
             God = new TheGod(Map);
 
             CurrentVideoSystem = new WorldVideoSystem(Map);
@@ -30,9 +30,11 @@ namespace World
         }
 
 
-        private void PopulateInitial()
+        private (int x,int y) PopulateInitial()
         {
             var (x, y) = RndXY;
+            if ((Map[x, y].CellType & CellType.Alive) == CellType.Alive)
+                return (x,y) ;
 
             var s = CreateASettler(null);
 
@@ -40,11 +42,13 @@ namespace World
 
             /*     var ac = new AliveCell();
                  ac.TakeCell(ref Map.Cells[30, 30]);*/
+
+            return (x, y);
         }
 
         private ISettler CreateASettler(object p)
         {
-            return new Plant();
+            return God.CreateLife(new Plant());
         }
 
         private Cell GetRandomCell()
@@ -55,19 +59,24 @@ namespace World
 
         public void RandomSettle()
         {
-            return;
+           /// return;
 
             ThreadPool.QueueUserWorkItem(
                 s =>
                 {
-                    var c = GetRandomCell();
+                    var (x,y) = PopulateInitial();
+                   
+                    // Thread.Sleep((int)s);                  
+                    //  Map.Cells[x, y] = Cell.Empty; 
+                  
+                    /*var c = GetRandomCell();
                     if (c.CellType == CellType.Wall)
                         return;
 
                     c.CellType = CellType.Wall;
                     Map.Cells[c.X, c.Y] = c;
                     Thread.Sleep((int)s);
-                    Map.Cells[c.X, c.Y] = default(Cell);
+                    Map.Cells[c.X, c.Y] = default(Cell);*/
                 },
                 Randomizer.Next(10000));
         }

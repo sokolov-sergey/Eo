@@ -16,10 +16,11 @@ namespace Ww.GrapfComponints
     {
         Queue<Frame> Frames = new Queue<Frame>();
         System.Threading.Timer Timer;
-        private int _fps = 30;
+        private int _fps = 24;
         private int frameCount;
         private object drawLocker = new object();
         private int flag = 0;
+        private int maxQueueSize = 150;
 
         public Frame LastFrame { get; private set; } = Frame.Empty;
 
@@ -51,7 +52,7 @@ namespace Ww.GrapfComponints
             if (DesignMode)
                 return;
 
-           // if (Interlocked.CompareExchange(ref flag, 1, 0) == 0)
+            // if (Interlocked.CompareExchange(ref flag, 1, 0) == 0)
             {
                 try
                 {
@@ -72,7 +73,7 @@ namespace Ww.GrapfComponints
                 e.Graphics.DrawImage((Image)LastFrame.Image.Clone(), 0, 0);
                 DrawDebug(e.Graphics);
 
-               // Interlocked.Decrement(ref flag);
+                // Interlocked.Decrement(ref flag);
             }
 
             if (frameCount++ > 100)
@@ -85,12 +86,16 @@ namespace Ww.GrapfComponints
 
         private void DrawDebug(Graphics graphics)
         {
-            graphics.DrawString($"MaxFPS:{FPS} fC:{frameCount}", Font, Brushes.Blue, 0, 0);
+            graphics.DrawString($"MaxFPS:{FPS} fC:{frameCount} FS:{Frames.Count}", Font, Brushes.Blue, 0, 0);
         }
 
-        internal void PushFrame(Frame frame)
+        internal int PushFrame(Frame frame)
         {
+            if (Frames.Count > maxQueueSize)
+                Frames.Clear();
+
             Frames.Enqueue(frame);
+            return 0;
         }
 
 

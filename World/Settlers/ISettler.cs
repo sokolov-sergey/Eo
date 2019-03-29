@@ -9,6 +9,16 @@ namespace World.Settlers
         IMap Map { get; set; }
         IActorRef Soul{get;}
 
+        float Energy { get;  }
+        
+        float Organics { get; }
+        float Minerals { get; }
+
+        IGenome Genome { get; set; }
+
+        int Age { get; }
+
         ISettler SparkSoul(ActorSystem spark);
+
     }
 }

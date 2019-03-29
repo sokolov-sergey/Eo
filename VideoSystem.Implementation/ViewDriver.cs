@@ -95,12 +95,12 @@ namespace VideoSystem.Implementation
             if (cell.CellType == CellType.Empty)
                 return;
 
-            var pen = CellToPen(cell);
+           // var pen = CellToPen(cell);
             var brush = CelltoBrush(cell);
             var rect = new Rectangle((cell.X * Scale), (cell.Y * Scale), Scale - margin, Scale - margin);
 
             g.FillRectangle(brush, rect);
-            g.DrawRectangle(pen, rect);
+            //g.DrawRectangle(pen, rect);
 
         }
 

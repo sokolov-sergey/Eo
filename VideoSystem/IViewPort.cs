@@ -8,8 +8,8 @@ namespace VideoSystem
 {
     public interface IViewPort
     {
-        void ProvideFrames(Action<Frame> action);
-        int MaxFPS { get; }
+        void ProvideFrames(Func<Frame,int> action);
+        int MaxFPS { get; set; }
 
         void ZoomIn(int x=0);
         void SetDeviceSize(int width, int height);

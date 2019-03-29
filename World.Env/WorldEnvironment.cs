@@ -17,11 +17,14 @@ namespace World
 
         private Random Randomizer = new Random();
 
+
         public (int x, int y) RndXY { get => (Randomizer.Next(0, Map.Width), Randomizer.Next(0, Map.Height)); }
+
+        public int SettlersCount { get => God.SettlersCount; }
 
         public WorldEnvironment()
         {
-            Map = new Map(height: 20, width: 20);
+            Map = new Map(height: 96, width: 200);
             God = new TheGod(Map);
 
             CurrentVideoSystem = new WorldVideoSystem(Map);
@@ -30,11 +33,11 @@ namespace World
         }
 
 
-        private (int x,int y) PopulateInitial()
+        private (int x, int y) PopulateInitial()
         {
             var (x, y) = RndXY;
             if ((Map[x, y].CellType & CellType.Alive) == CellType.Alive)
-                return (x,y) ;
+                return (x, y);
 
             var s = CreateASettler(null);
 
@@ -48,7 +51,8 @@ namespace World
 
         private ISettler CreateASettler(object p)
         {
-            return God.CreateLife(new Plant());
+            var s = new Plant();
+            return God.CreateLife(s);
         }
 
         private Cell GetRandomCell()
@@ -59,16 +63,20 @@ namespace World
 
         public void RandomSettle()
         {
-           /// return;
+            /// return;
 
             ThreadPool.QueueUserWorkItem(
                 s =>
                 {
-                    var (x,y) = PopulateInitial();
-                   
+                    for (int i = 0; i < 200; i++)
+                    {
+                        PopulateInitial();
+                    }
+
+
                     // Thread.Sleep((int)s);                  
                     //  Map.Cells[x, y] = Cell.Empty; 
-                  
+
                     /*var c = GetRandomCell();
                     if (c.CellType == CellType.Wall)
                         return;

@@ -11,13 +11,13 @@ namespace VideoSystem.Implementation
         private IViewDriver Driver;
 
         Size DeviceSize = new Size(800, 600);
-
+        private int _currFps = 25;
 
         public WorldVideoPort(IMap map)
         {
             Driver = new ViewDriver(map);
 
-            Timer = new Timer(TickHadler, null, 1000, 1000 / MaxFPS + 5);
+            Timer = new Timer(TickHadler, null, 1000, 1000 / MaxFPS );
         }
 
 
@@ -32,19 +32,29 @@ namespace VideoSystem.Implementation
                 Driver.DrawEnvironment(g);
                 Driver.DrawCells(g);
                 Driver.DrawDebug(g);
-                FrameHandler(new Frame(bitmap));
+                var delay = FrameHandler(new Frame(bitmap));
+                if (delay > 0)
+                {
+                    Timer.Change(delay * 1000, 1000 / MaxFPS);
+                }
             }
             catch { }
             
         }
 
-        public int MaxFPS => 25;
+        public int MaxFPS { get { return _currFps; } set { SetFps(value); } }
 
-        public Action<Frame> FrameHandler { get; private set; }
-
-        public void ProvideFrames(Action<Frame> action)
+        private void SetFps(int value)
         {
-            FrameHandler = action;
+            _currFps = value;
+            Timer.Change(1000,1000/MaxFPS);
+        }
+
+        public Func<Frame,int> FrameHandler { get; private set; }
+
+        public void ProvideFrames(Func<Frame,int> action)
+        {
+            FrameHandler = action;            
         }
 
         public void ZoomIn(int x = 0)

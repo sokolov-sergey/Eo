@@ -14,6 +14,15 @@ namespace World
     public class Freeze : MessageOfTheGod
     {
     }
+    
+    public class Spawn: MessageOfTheGod
+    {
+        public ISettler Settler;
+        public Spawn(ISettler settler)
+        {
+            Settler = settler;
+        }
+    }
 
 
     public interface IGod

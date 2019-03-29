@@ -16,8 +16,7 @@ namespace World.Settlers.Plants
 
             }
 
-            private (int level, int cmd) Sequenser(int gen) => (gen >> 8, ((gen>>8)<<8) ^ gen);
-
+            private (int level, int cmd) Sequenser(int gen) => (gen >> 8, ((gen >> 8) << 8) ^ gen);
 
             protected override void LifeTick(object state)
             {
@@ -29,11 +28,17 @@ namespace World.Settlers.Plants
                     {
                         Body.Feed(lv);
                     }
+
+                    if (c == Gens.Breed && Body.Energy > 100)
+                    {
+                        var s = Body.Spawn();
+                        if (s is null)
+                            return;
+
+                        Body.Energy /= 4;
+                        Context.System.EventStream.Publish(new Spawn(s));
+                    }
                 }
-
-
-                
-
 
                 Context.System.Scheduler
                     .ScheduleTellOnceCancelable(
@@ -45,17 +50,97 @@ namespace World.Settlers.Plants
         {
             Color = Color - (5 << 8);
             _Cell.SetColor(Color);
+            Energy += 10;
         }
 
         private Cell _Cell;
         private int Color = 0x7800FF00;
 
 
+        public Plant() : this(PlantGenome.Defaul)
+        {
+        }
+
         public Plant(IGenome genome)
         {
             Genome = genome;
         }
 
+        protected ISettler Spawn()
+        {
+            Cell c = SelectCell();
+
+            if (c is null)
+            {
+                this.Energy /= 3;
+                return null;
+            }
+
+            int[] genome = (int[])Array.CreateInstance(typeof(int), Genome.Length);
+            int i = 0;
+            foreach (var g in Genome)
+            {
+                genome[i++] = g;
+            }
+            var body = new Plant(new PlantGenome(genome));
+            body.Cell = c;
+            body.Map = Map;
+            body.Energy = this.Energy / 6;
+
+
+            return body;
+        }
+
+        private Cell SelectCell()
+        {
+            var (x, y) = (_Cell.X, _Cell.Y);
+
+            Cell c = PickACell(x-1,y-1);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+            c = PickACell(x, y - 1);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+            c = PickACell(x+1, y - 1);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+            c = PickACell(x-1, y);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+            c = PickACell(x+1, y);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+            c = PickACell(x - 1, y + 1);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+            c = PickACell(x, y + 1);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+            c = PickACell(x + 1, y+ 1);
+            if (c != null && c.CellType == CellType.Empty)
+                return c;
+
+
+            return null;
+        }
+
+        private Cell PickACell(int x, int y)
+        {
+            try
+            {
+                return Map[x, y];
+            }
+            catch { }
+
+            return null;
+        }
 
         public Cell Cell { get => _Cell; set => SetCell(value); }
 

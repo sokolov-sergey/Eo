@@ -31,6 +31,7 @@ namespace Ww
         private void Monitor1_KeyDown(object sender, KeyEventArgs e)
         {
             Environment.RandomSettle();
+            label1_Click(null, null);
         }
 
         private void Monitor1_Resize(object sender, EventArgs e)

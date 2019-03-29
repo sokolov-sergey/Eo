@@ -24,7 +24,7 @@ namespace World
 
         public WorldEnvironment()
         {
-            Map = new Map(height: 96, width: 200);
+            Map = new Map(height: 100, width: 100);
             God = new TheGod(Map);
 
             CurrentVideoSystem = new WorldVideoSystem(Map);
@@ -42,9 +42,6 @@ namespace World
             var s = CreateASettler(null);
 
             God.PopulateCell(x, y, s);
-
-            /*     var ac = new AliveCell();
-                 ac.TakeCell(ref Map.Cells[30, 30]);*/
 
             return (x, y);
         }
@@ -68,7 +65,7 @@ namespace World
             ThreadPool.QueueUserWorkItem(
                 s =>
                 {
-                    for (int i = 0; i < 200; i++)
+                    for (int i = 0; i < 10; i++)
                     {
                         PopulateInitial();
                     }

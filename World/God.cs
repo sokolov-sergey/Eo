@@ -5,10 +5,28 @@ using World.Settlers;
 
 namespace World
 {
+
     public class TheGod : IGod
     {
+        public class AbsoluteKnowledge : ReceiveActor
+        {
+            private TheGod God;
+
+            public AbsoluteKnowledge(TheGod god)
+            {
+                God = god;
+                Receive<Spawn>(m => SpawnASettler(m));
+            }
+
+            private void SpawnASettler(Spawn m)
+            {
+                God.CreateLife(m.Settler);
+            }
+        }
+
         readonly ActorSystem Spark = ActorSystem.Create("THE-GOD");
         private readonly IMap Map;
+        private IActorRef Knowledge;
 
         public int SettlersCount { get; private set; } = 0;
 
@@ -16,6 +34,8 @@ namespace World
         {
             this.Map = map;
 
+            Knowledge = Spark.ActorOf(Props.Create<AbsoluteKnowledge>(this));
+            Spark.EventStream.Subscribe(Knowledge, typeof(Spawn));
 
             //Spark.Scheduler.ScheduleOnce(TimeSpan.FromSeconds(20), () => { Spark.EventStream.Publish(new Freeze()); });
         }

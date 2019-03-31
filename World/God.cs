@@ -30,6 +30,8 @@ namespace World
 
         public int SettlersCount { get; private set; } = 0;
 
+        public int SoulActorsCount => 0;
+
         public TheGod(IMap map)
         {
             this.Map = map;

@@ -30,6 +30,7 @@ namespace World
             CurrentVideoSystem = new WorldVideoSystem(Map);
 
             PopulateInitial();
+            //PopulateInitial();
         }
 
 
@@ -65,7 +66,7 @@ namespace World
             ThreadPool.QueueUserWorkItem(
                 s =>
                 {
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < 1; i++)
                     {
                         PopulateInitial();
                     }

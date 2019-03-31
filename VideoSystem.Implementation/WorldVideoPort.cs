@@ -11,7 +11,7 @@ namespace VideoSystem.Implementation
         private IViewDriver Driver;
 
         Size DeviceSize = new Size(800, 600);
-        private int _currFps = 25;
+        private int _currFps = 5;
 
         public WorldVideoPort(IMap map)
         {

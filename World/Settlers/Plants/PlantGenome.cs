@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace World.Settlers.Plants
 {
+
     public static class Gens
     {
         public const int None = 0;
@@ -16,14 +17,14 @@ namespace World.Settlers.Plants
 
     public class PlantGenome : IGenome
     {
-        public static readonly IGenome Defaul = InitDefault();
+        private static Random Rnd = new Random();
+        public static  IGenome Defaul => InitDefault();
 
-        private static int CodeGen(int val) => (0x0F << 8) + val;
-
+        private static int CodeGen(int val) => (Rnd.Next(1,100) << 8) + val;
 
         private static IGenome InitDefault()
         {
-            var d = new int[] {CodeGen(Gens.Photosynthesis), CodeGen(Gens.Breed)  };
+            var d = new int[] { CodeGen(Gens.Photosynthesis), CodeGen(Gens.Breed) };
 
             return new PlantGenome(d);
         }

@@ -9,7 +9,7 @@ namespace World.Maps
 
         public CellType CellType;
         public int X, Y;
-        private ISettler Settler;
+        public ISettler Settler { get; private set; }
 
         public void SetColor(int color)
         {
@@ -29,10 +29,14 @@ namespace World.Maps
             Settler = null;
         }
 
+        object lockObject = new object();
         public Cell Populate(ISettler s)
         {
-            Settler = s;
-            return this;
+            lock (lockObject)
+            {
+                Settler = s;
+                return this;
+            }
         }
 
         public void Dispose()

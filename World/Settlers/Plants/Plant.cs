@@ -13,13 +13,15 @@ namespace World.Settlers.Plants
         {
             public PlantSoul(Plant settler) : base(settler)
             {
-
             }
 
             private (int level, int cmd) Sequenser(int gen) => (gen >> 8, ((gen >> 8) << 8) ^ gen);
 
             protected override void LifeTick(object state)
             {
+                if (Body._Cell.Settler != Body)
+                    Body.Die();
+
                 foreach (var g in Body.Genome)
                 {
                     var (lv, c) = Sequenser(g);
@@ -31,13 +33,21 @@ namespace World.Settlers.Plants
 
                     if (c == Gens.Breed && Body.Energy > 100)
                     {
-                        var s = Body.Spawn();
-                        if (s is null)
-                            return;
-
-                        Body.Energy /= 4;
-                        Context.System.EventStream.Publish(new Spawn(s));
+                        var s = Body.Spawn(lv);
+                        if (s != null)
+                        {
+                            Body.Energy /= 4;
+                            Context.System.EventStream.Publish(new Spawn(s));
+                        }
                     }
+
+                    if (Body.FailedSpawns > 10)
+                    {
+                        this.Self.Tell(PoisonPill.Instance);
+
+                        Body.Die();
+                    }
+
                 }
 
                 Context.System.Scheduler
@@ -45,6 +55,16 @@ namespace World.Settlers.Plants
                         100, Self, INTERNAL_LIFE_TICK, Self);
             }
         }
+
+        private void Die()
+        {
+            _Cell.CellType = CellType.Dead;
+            _Cell.SetColor(0X78FFFFFF);
+            _Cell.Populate(null);
+        }
+
+        private Random Randomizer = new Random(DateTime.Now.Millisecond);
+
 
         private void Feed(int lv)
         {
@@ -66,22 +86,37 @@ namespace World.Settlers.Plants
             Genome = genome;
         }
 
-        protected ISettler Spawn()
+        int FailedSpawns = 0;
+
+        protected ISettler Spawn(int lv)
         {
             Cell c = SelectCell();
 
-            if (c is null)
+            if (c is null
+                || ((c.CellType != CellType.Empty) && (c.CellType != CellType.Dead))
+                || (c.CellType == CellType.Dead && lv < 50)
+                || (((c.CellType | CellType.Alive) == CellType.Alive) && (c.Settler != null && c.Settler.Energy - 10 <= lv))
+                )
             {
                 this.Energy /= 3;
+                FailedSpawns++;
+
                 return null;
             }
+
+            //if ((c.CellType | CellType.Alive) == CellType.Alive && c.Settler.)
 
             int[] genome = (int[])Array.CreateInstance(typeof(int), Genome.Length);
             int i = 0;
             foreach (var g in Genome)
             {
-                genome[i++] = g;
+                var (lev, cmd) = (g >> 8, 0);
+                cmd = (g << 8) ^ g;
+
+                // mutation of gen's level component
+                genome[i++] = cmd + (Randomizer.Next(lev - 1, lev + 4) << 8);
             }
+
             var body = new Plant(new PlantGenome(genome));
             body.Cell = c;
             body.Map = Map;
@@ -95,60 +130,43 @@ namespace World.Settlers.Plants
         {
             var (x, y) = (_Cell.X, _Cell.Y);
 
-            Cell c = PickACell(x-1,y-1);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
+            (int, int)[] points = new (int, int)[] {
+                (x - 1, y - 1),(x, y - 1),(x+1, y - 1),
+                (x-1, y),(x+1, y),(x - 1, y + 1),
+                (x, y + 1),(x + 1, y+ 1)
+            };
 
-            c = PickACell(x, y - 1);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
+            Cell c;
 
-            c = PickACell(x+1, y - 1);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
+            for (int i = 0; i < 3; i++)
+            {
 
-            c = PickACell(x-1, y);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
-
-            c = PickACell(x+1, y);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
-
-            c = PickACell(x - 1, y + 1);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
-
-            c = PickACell(x, y + 1);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
-
-            c = PickACell(x + 1, y+ 1);
-            if (c != null && c.CellType == CellType.Empty)
-                return c;
-
+                var (dx, dy) = points[Randomizer.Next(0, 8)];
+                c = PickACell(dx, dy);
+                if (c != null)
+                    return c;
+            }
 
             return null;
         }
 
         private Cell PickACell(int x, int y)
         {
-            try
-            {
+            if ((x < Map.Width && x > -1) && (y > -1 && y < Map.Height))
                 return Map[x, y];
-            }
-            catch { }
 
             return null;
         }
 
         public Cell Cell { get => _Cell; set => SetCell(value); }
+        private (int x, int y) Heighbors;
 
         private void SetCell(Cell cell)
         {
             _Cell = cell;
             _Cell.SetColor(this.Color);
             _Cell.CellType = CellType.Alive | CellType.Plant;
+            _Cell.Populate(this);
         }
 
         public ISettler SparkSoul(ActorSystem spark)

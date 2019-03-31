@@ -12,7 +12,7 @@ namespace VideoSystem.Implementation
         private Rectangle MapBorder;
         private Brush MapBg;
         private readonly int MinCellScale = 3;
-        private int Scale = 9;
+        private int Scale = 3;
         private readonly Font debugFont = new Font(FontFamily.GenericMonospace, 8);
         private readonly Random Randomizer = new Random();
 

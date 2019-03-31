@@ -31,5 +31,6 @@ namespace World
         ISettler CreateLife(ISettler plant);
 
         int SettlersCount { get; }
+        int SoulActorsCount { get; }
     }
 }

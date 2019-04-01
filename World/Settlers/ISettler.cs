@@ -9,6 +9,8 @@ namespace World.Settlers
         IMap Map { get; set; }
         IActorRef Soul{get;}
 
+        int LifeCyclesCount { get; }
+
         float Energy { get;  }
         
         float Organics { get; }

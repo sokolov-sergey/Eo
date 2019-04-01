@@ -68,6 +68,7 @@ namespace Ww
                 {
                     var s = cell.Settler;
                     listBox1.Items.Add($"Enrg:{s.Energy}");
+                    listBox1.Items.Add($"Cycles left:{s.LifeCyclesCount}");
 
                     foreach (var g in s.Genome)
                     {

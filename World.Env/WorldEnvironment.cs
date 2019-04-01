@@ -33,7 +33,6 @@ namespace World
             //PopulateInitial();
         }
 
-
         private (int x, int y) PopulateInitial()
         {
             var (x, y) = RndXY;

@@ -26,10 +26,13 @@ namespace World.Settlers.Plants
 
             protected override void LifeTick(object state)
             {
-                if (Body._Cell.Settler != Body
-                    || Body.Energy <= -15
+                if (Body._Cell.Settler != Body|| Body.Energy <= -15
+                    || Body.FailedSpawns > 10 || Body.LifeCyclesCount-- < 0
                     )
+                {
                     Kill();
+                    return;
+                }
 
 
                 foreach (var g in Body.Genome)
@@ -50,13 +53,6 @@ namespace World.Settlers.Plants
                             Context.System.EventStream.Publish(new Spawn(s));
                         }
                     }
-
-                    if (Body.FailedSpawns > 10)
-                    {
-                        Kill();
-                        return;
-                    }
-
                 }
 
                 Context.System.Scheduler
@@ -80,16 +76,16 @@ namespace World.Settlers.Plants
         private void Feed(int lv)
         {
             var mpl = 0;
-            for (int i = 0; i < 9; i++)
-                if (Neighborhood[i] != null 
-                    && (Neighborhood[i].CellType | CellType.Alive) == CellType.Alive)
+            for (int i = 0; i < Neighborhood.Length; i++)
+                if (Neighborhood[i] != null && Neighborhood[i].CellType != CellType.Empty
+                    && (Neighborhood[i].CellType & CellType.Alive) == CellType.Alive)
                     mpl++;
 
 
 
             Color = Color - (5 << 8);
             _Cell.SetColor(Color);
-            Energy += lv / (mpl+1) - 1;
+            Energy += lv / (mpl + 1) - 1;
         }
 
         private Cell _Cell;
@@ -115,8 +111,9 @@ namespace World.Settlers.Plants
                 || lv <= 10
                 || ((c.CellType != CellType.Empty) && (c.CellType != CellType.Dead))
                 || (c.CellType == CellType.Dead && lv < 80)
-                || (((c.CellType | CellType.Alive) == CellType.Alive)
-                        && (c.Settler != null && c.Settler.Genome.DistanceBetween(this.Genome) > 20 && c.Settler.Energy - 10 <= this.Energy + lv))
+                || (((c.CellType & CellType.Alive) == CellType.Alive)
+                        && c.Settler != null && c.Settler.Genome.DistanceBetween(this.Genome) > 20
+                        && c.Settler.Energy - 10 <= this.Energy + lv)
 
                 )
             {
@@ -133,9 +130,9 @@ namespace World.Settlers.Plants
             foreach (var g in Genome)
             {
                 var (lev, cmd) = g.SequenceGen();
-
+                lev = cmd != Gens.PopulationId ? Randomizer.Next(lev - 1, lev + 2) : lev;
                 // mutation of gen's level component
-                genome[i++] = (Randomizer.Next(lev - 1, lev + 2), cmd).CodeGen();
+                genome[i++] = (lev, cmd).CodeGen();
             }
 
             var body = new Plant(new PlantGenome(genome));
@@ -195,7 +192,7 @@ namespace World.Settlers.Plants
                 for (int j = -2; j < 3; j++)
                 {
                     if (i != 0 && j != 0)
-                        Neighborhood[n++] = PickACell(i, j);
+                        Neighborhood[n++] = PickACell(cell.X + i, cell.Y + j);
                 }
 
             _Cell = cell;
@@ -223,5 +220,6 @@ namespace World.Settlers.Plants
         public IGenome Genome { get; set; }
 
         public int Age { get; } = 0;
+        public int LifeCyclesCount { get; private set; } = 300;
     }
 }

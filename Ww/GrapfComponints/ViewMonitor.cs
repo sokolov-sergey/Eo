@@ -29,7 +29,6 @@ namespace Ww.GrapfComponints
             get => _fps;
             set
             {
-
                 Timer.Change(1000, 1000 / FPS);
                 _fps = value;
             }
@@ -39,13 +38,16 @@ namespace Ww.GrapfComponints
         {
             InitializeComponent();
             Paint += Monitor_Paint;
-            Timer = new System.Threading.Timer(TickHandler, null, 1000, 1000 / FPS);
+            Timer = new System.Threading.Timer(TickHandler, null, 1000, 1000 / FPS);            
         }
 
         private void TickHandler(object state)
         {
             this.Invalidate();
         }
+
+      
+
 
         private void Monitor_Paint(object sender, PaintEventArgs e)
         {

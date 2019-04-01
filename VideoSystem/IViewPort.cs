@@ -13,5 +13,6 @@ namespace VideoSystem
 
         void ZoomIn(int x=0);
         void SetDeviceSize(int width, int height);
+        (int x,int y) PixelToCell(int x, int y);
     }
 }

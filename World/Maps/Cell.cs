@@ -11,15 +11,19 @@ namespace World.Maps
         public int X, Y;
         public ISettler Settler { get; private set; }
 
-        public void SetColor(int color)
+
+        public void SetColor(int color,int idx=0)
         {
-            Color = color;
+            Colors[idx] = color;
         }
+
+        public int[] Colors { get; private set; } = new int[255];
 
         public int Organics;
         public int Minedals;
 
-        public int Color { get; private set; }
+
+        public int Color { get=>Colors[0]; private set=>Colors[0]=value; }
 
         public Cell(CellType type, int x, int y)
         {

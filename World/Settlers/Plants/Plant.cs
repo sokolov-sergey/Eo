@@ -15,16 +15,26 @@ namespace World.Settlers.Plants
             {
             }
 
-            private (int level, int cmd) Sequenser(int gen) => (gen >> 8, ((gen >> 8) << 8) ^ gen);
+            private (int level, int cmd) Sequencer(int gen) => gen.SequenceGen();
+
+            private void Kill()
+            {
+                Context.System.EventStream.Unsubscribe(Self);
+                this.Self.Tell(PoisonPill.Instance);
+                Body.Die();
+            }
 
             protected override void LifeTick(object state)
             {
-                if (Body._Cell.Settler != Body)
-                    Body.Die();
+                if (Body._Cell.Settler != Body
+                    || Body.Energy <= -15
+                    )
+                    Kill();
+
 
                 foreach (var g in Body.Genome)
                 {
-                    var (lv, c) = Sequenser(g);
+                    var (lv, c) = Sequencer(g);
 
                     if (c == Gens.Photosynthesis)
                     {
@@ -43,21 +53,22 @@ namespace World.Settlers.Plants
 
                     if (Body.FailedSpawns > 10)
                     {
-                        this.Self.Tell(PoisonPill.Instance);
-
-                        Body.Die();
+                        Kill();
+                        return;
                     }
 
                 }
 
                 Context.System.Scheduler
                     .ScheduleTellOnceCancelable(
-                        100, Self, INTERNAL_LIFE_TICK, Self);
+                        200, Self, INTERNAL_LIFE_TICK, Self);
             }
         }
 
         private void Die()
         {
+
+
             _Cell.CellType = CellType.Dead;
             _Cell.SetColor(0X78FFFFFF);
             _Cell.Populate(null);
@@ -68,9 +79,17 @@ namespace World.Settlers.Plants
 
         private void Feed(int lv)
         {
+            var mpl = 0;
+            for (int i = 0; i < 9; i++)
+                if (Neighborhood[i] != null 
+                    && (Neighborhood[i].CellType | CellType.Alive) == CellType.Alive)
+                    mpl++;
+
+
+
             Color = Color - (5 << 8);
             _Cell.SetColor(Color);
-            Energy += 10;
+            Energy += lv / (mpl+1) - 1;
         }
 
         private Cell _Cell;
@@ -93,9 +112,12 @@ namespace World.Settlers.Plants
             Cell c = SelectCell();
 
             if (c is null
+                || lv <= 10
                 || ((c.CellType != CellType.Empty) && (c.CellType != CellType.Dead))
-                || (c.CellType == CellType.Dead && lv < 50)
-                || (((c.CellType | CellType.Alive) == CellType.Alive) && (c.Settler != null && c.Settler.Energy - 10 <= lv))
+                || (c.CellType == CellType.Dead && lv < 80)
+                || (((c.CellType | CellType.Alive) == CellType.Alive)
+                        && (c.Settler != null && c.Settler.Genome.DistanceBetween(this.Genome) > 20 && c.Settler.Energy - 10 <= this.Energy + lv))
+
                 )
             {
                 this.Energy /= 3;
@@ -110,21 +132,21 @@ namespace World.Settlers.Plants
             int i = 0;
             foreach (var g in Genome)
             {
-                var (lev, cmd) = (g >> 8, 0);
-                cmd = (g << 8) ^ g;
+                var (lev, cmd) = g.SequenceGen();
 
                 // mutation of gen's level component
-                genome[i++] = cmd + (Randomizer.Next(lev - 1, lev + 4) << 8);
+                genome[i++] = (Randomizer.Next(lev - 1, lev + 2), cmd).CodeGen();
             }
 
             var body = new Plant(new PlantGenome(genome));
-            body.Cell = c;
             body.Map = Map;
+            body.Cell = c;
             body.Energy = this.Energy / 6;
-
 
             return body;
         }
+
+
 
         private Cell SelectCell()
         {
@@ -138,10 +160,14 @@ namespace World.Settlers.Plants
 
             Cell c;
 
-            for (int i = 0; i < 3; i++)
             {
 
                 var (dx, dy) = points[Randomizer.Next(0, 8)];
+                c = PickACell(dx, dy);
+                if (c != null)
+                    return c;
+
+                (dx, dy) = points[Randomizer.Next(0, 8)];
                 c = PickACell(dx, dy);
                 if (c != null)
                     return c;
@@ -159,13 +185,23 @@ namespace World.Settlers.Plants
         }
 
         public Cell Cell { get => _Cell; set => SetCell(value); }
-        private (int x, int y) Heighbors;
+
+        private readonly Cell[] Neighborhood = new Cell[5 * 5 - 1];
 
         private void SetCell(Cell cell)
         {
+            var n = 0;
+            for (int i = -2; i < 3; i++)
+                for (int j = -2; j < 3; j++)
+                {
+                    if (i != 0 && j != 0)
+                        Neighborhood[n++] = PickACell(i, j);
+                }
+
             _Cell = cell;
             _Cell.SetColor(this.Color);
             _Cell.CellType = CellType.Alive | CellType.Plant;
+            _Cell.SetColor(254 << 24 | (this.Genome.PopulationId * 255 / 100) << 16, 1);
             _Cell.Populate(this);
         }
 

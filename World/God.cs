@@ -16,6 +16,26 @@ namespace World
             {
                 God = god;
                 Receive<Spawn>(m => SpawnASettler(m));
+                Receive<string>(m => CleanupMap(), m => "CLEANUP".Equals(m));
+
+                Context.System.Scheduler.ScheduleTellRepeatedly(
+                    TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1),
+                    Self, "CLEANUP",Self);
+            }
+
+            private void CleanupMap()
+            {
+                for (int i = 0; i < God.Map.Height; i++)
+                    for (int j = 0; j < God.Map.Width; j++)
+                    {
+                        var c = God.Map[i, j];
+                        var stlr = c.Settler;
+                        if (stlr != null && stlr.Soul == null)
+                        {
+                            c.Populate(null);
+                            c.CellType = CellType.Dead;
+                        }
+                    }
             }
 
             private void SpawnASettler(Spawn m)
@@ -26,7 +46,7 @@ namespace World
 
         readonly ActorSystem Spark = ActorSystem.Create("THE-GOD");
         private readonly IMap Map;
-        private IActorRef Knowledge;
+        private readonly IActorRef Knowledge;
 
         public int SettlersCount { get; private set; } = 0;
 

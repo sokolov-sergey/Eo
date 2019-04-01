@@ -2,6 +2,8 @@
 using System.Windows.Forms;
 using VideoSystem;
 using World;
+using World.Settlers;
+using World.Settlers.Plants;
 
 namespace Ww
 {
@@ -15,7 +17,7 @@ namespace Ww
         {
             Environment = new WorldEnvironment();
 
-            
+
 
             ViewPort = Environment.GetViewPort();
 
@@ -46,13 +48,34 @@ namespace Ww
 
         private void button1_Click(object sender, EventArgs e)
         {
-      
+
         }
 
         private void monitor1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                Environment.RandomSettle();
+            {
+                listBox1.Items.Clear();
+                var cell = Environment.GetCellInfo(e.X, e.Y);
+
+                if (cell == null)
+                    return;
+
+                listBox1.Items.Add($"Type:{cell.CellType}");
+                listBox1.Items.Add($"X,Y:{cell.X},{cell.Y}");
+
+                if (cell.Settler != null)
+                {
+                    var s = cell.Settler;
+                    listBox1.Items.Add($"Enrg:{s.Energy}");
+
+                    foreach (var g in s.Genome)
+                    {
+                        var (lv, cmd) = g.SequenceGen();
+                        listBox1.Items.Add($"gen:{cmd}, lv:{lv}");
+                    }
+                }
+            }
 
             if (e.Button == MouseButtons.Middle)
                 ViewPort.ZoomIn(x: 0);
@@ -80,7 +103,7 @@ namespace Ww
 
         private void label1_Click(object sender, EventArgs e)
         {
-            label1.Text =  $"life count: {Environment.SettlersCount}";
+            label1.Text = $"life count: {Environment.SettlersCount}";
         }
     }
 }

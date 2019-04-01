@@ -10,5 +10,6 @@ namespace VideoSystem
         void ZoomIn(int x);
         void DrawDebug(Graphics g);
         void DrawCells(Graphics g);
+        (int x,int y) PixelToCell(int x, int y);
     }
 }

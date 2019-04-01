@@ -66,5 +66,10 @@ namespace VideoSystem.Implementation
         {
             DeviceSize = new Size(width, height);
         }
+
+        public (int x,int y) PixelToCell(int x, int y)
+        {
+            return Driver.PixelToCell(x,y);
+        }
     }
 }

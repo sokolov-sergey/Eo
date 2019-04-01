@@ -30,7 +30,7 @@ namespace VideoSystem.Implementation
             MapBorder = new Rectangle(new Point(1, 1), PhysicalSize);
             MapBg = new LinearGradientBrush(
                 new Point(MapBorder.Width / 2, 0), new Point(MapBorder.Width / 2, MapBorder.Height),
-                Color.LightSeaGreen, Color.DarkSlateBlue);
+                Color.LightSeaGreen, Color.SeaGreen);
 
         }
 
@@ -76,7 +76,7 @@ namespace VideoSystem.Implementation
 
         public void DrawDebug(Graphics g)
         {
-            g.DrawString($"Sx{Scale}", debugFont, Brushes.DarkOrange, 100,  0);
+            g.DrawString($"Sx{Scale}", debugFont, Brushes.DarkOrange, 100, 0);
         }
 
         public void DrawCells(Graphics g)
@@ -95,12 +95,12 @@ namespace VideoSystem.Implementation
             if (cell.CellType == CellType.Empty)
                 return;
 
-           // var pen = CellToPen(cell);
+             var pen = CellToPen(cell);
             var brush = CelltoBrush(cell);
             var rect = new Rectangle((cell.X * Scale), (cell.Y * Scale), Scale - margin, Scale - margin);
 
             g.FillRectangle(brush, rect);
-            //g.DrawRectangle(pen, rect);
+            g.DrawRectangle(pen, rect);
 
         }
 
@@ -119,14 +119,17 @@ namespace VideoSystem.Implementation
             var pen = Pens.Transparent;
 
             if ((cell.CellType & CellType.Alive) == CellType.Alive)
-                pen = new Pen(Color.FromArgb(cell.Color));
-
+                pen = new Pen(Color.FromArgb(cell.Colors[1]),1);
 
             if (cell.CellType == CellType.Wall)
                 pen = Pens.Black;
 
-
             return pen;
+        }
+
+        public (int x, int y) PixelToCell(int x, int y)
+        {
+            return (x / Scale, y / Scale);
         }
     }
 }

@@ -59,6 +59,22 @@ namespace World
             return Map.Cells[x, y];
         }
 
+        public Cell GetCellInfo(int x, int y)
+        {
+            var (cx,cy) = GetViewPort().PixelToCell(x,y);
+
+            try
+            {
+                return Map[cx, cy];
+            }
+            catch
+            {
+
+            }
+
+            return null;
+        }
+
         public void RandomSettle()
         {
             /// return;

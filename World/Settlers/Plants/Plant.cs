@@ -183,13 +183,14 @@ namespace World.Settlers.Plants
 
         public Cell Cell { get => _Cell; set => SetCell(value); }
 
-        private readonly Cell[] Neighborhood = new Cell[5 * 5 - 1];
+        private Cell[] Neighborhood ;
 
         private void SetCell(Cell cell)
         {
+            Neighborhood = new Cell[7 * 7 - 1];
             var n = 0;
-            for (int i = -2; i < 3; i++)
-                for (int j = -2; j < 3; j++)
+            for (int i = -3; i < 4; i++)
+                for (int j = -3; j < 4; j++)
                 {
                     if (i != 0 && j != 0)
                         Neighborhood[n++] = PickACell(cell.X + i, cell.Y + j);

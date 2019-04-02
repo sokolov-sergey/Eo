@@ -57,7 +57,7 @@ namespace World.Settlers.Plants
 
                 Context.System.Scheduler
                     .ScheduleTellOnceCancelable(
-                        200, Self, INTERNAL_LIFE_TICK, Self);
+                        50, Self, INTERNAL_LIFE_TICK, Self);
             }
         }
 
@@ -79,7 +79,7 @@ namespace World.Settlers.Plants
                     && (Neighborhood[i].CellType & CellType.Alive) == CellType.Alive)
                     mpl++;
 
-            Energy += lv / (mpl + 1.000f) - 1.000f;
+            Energy += (lv + _Cell.Modificators[0]) / (mpl + 1.000f) - 1.000f;
             int perc = (int)(Energy > 100 ? 100 : Energy);
             Color = unchecked((int)((255 * perc) / 100 << 24 | Color));
             _Cell.SetColor(Color);
@@ -102,7 +102,7 @@ namespace World.Settlers.Plants
                 return gen == Gens.Color1 || gen == Gens.Color2 || gen == Gens.Color3;
             }).ToArray();
 
-            Color = (c[0]>>8)<< 16 | (c[1] >>8)<< 8 | c[2]>>8;
+            Color = (c[0] >> 8) << 16 | (c[1] >> 8) << 8 | c[2] >> 8;
         }
 
         int FailedSpawns = 0;
@@ -117,7 +117,7 @@ namespace World.Settlers.Plants
                 || (c.CellType == CellType.Dead && lv < 80)
                 || (((c.CellType & CellType.Alive) == CellType.Alive)
                         && c.Settler != null && c.Settler.Genome.DistanceBetween(this.Genome) > 20
-                        && c.Settler.Energy  <= this.Energy + lv)
+                        && c.Settler.Energy <= this.Energy + lv)
 
                 )
             {
@@ -131,10 +131,17 @@ namespace World.Settlers.Plants
 
             int[] genome = (int[])Array.CreateInstance(typeof(int), Genome.Length);
             int i = 0;
+            double mutationFactor = 0;
+
+            if (Cell.Modificators[0] > 0)
+                mutationFactor = Cell.Modificators[0] / (Cell.Modificators[0] / 3.0);
+
+            int mf = (int)Math.Ceiling(mutationFactor);
+
             foreach (var g in Genome)
             {
                 var (lev, cmd) = g.SequenceGen();
-                lev = cmd != Gens.PopulationId ? Randomizer.Next(lev - 1, lev + 2) : lev;
+                lev = cmd != Gens.PopulationId ? Randomizer.Next(lev - (1 + mf), lev + (2 + mf)) : lev;
                 // mutation of gen's level component
                 genome[i++] = (lev, cmd).CodeGen();
             }

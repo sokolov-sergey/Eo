@@ -74,6 +74,7 @@ namespace Ww
             listBox1.Items?.Clear();
 
             listBox1.Items.Add($"Type:{cell.CellType}");
+            listBox1.Items.Add($"Mod. 0:{cell.Modificators[0]}");
             listBox1.Items.Add($"X,Y:{cell.X},{cell.Y}");
 
             bodyPanel.BackColor = Color.FromArgb(cell.Color);

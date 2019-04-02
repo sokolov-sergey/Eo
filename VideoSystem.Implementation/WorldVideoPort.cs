@@ -50,7 +50,7 @@ namespace VideoSystem.Implementation
                     Timer.Change(delay * 1000, 1000 / MaxFPS);
                 }
             }
-            catch { }
+            catch(Exception ex) { }
 
         }
 

@@ -11,6 +11,7 @@ namespace World.Maps
         public int X, Y;
         public ISettler Settler { get; private set; }
 
+        public int[] Modificators { get; set; } = new int[255];
 
         public void SetColor(int color,int idx=0)
         {

@@ -91,16 +91,25 @@ namespace VideoSystem.Implementation
 
         private void DrawCell(Cell cell, Graphics g)
         {
+            Pen pen;
+            Brush brush;
+
             int margin = (Scale / MinCellScale) / 3;
             if (cell.CellType == CellType.Empty)
-                return;
+            {
+                if (cell.Modificators[0] < 1)
+                    return;
+                else
+                    brush = new SolidBrush(Color.FromArgb(cell.Modificators[0] * 255 / 100, Color.Gold));
+            }
+            else
+                brush = CelltoBrush(cell);
 
-             var pen = CellToPen(cell);
-            var brush = CelltoBrush(cell);
+            pen = CellToPen(cell);
             var rect = new Rectangle((cell.X * Scale), (cell.Y * Scale), Scale - margin, Scale - margin);
 
             g.FillRectangle(brush, rect);
-            g.DrawRectangle(pen, rect);
+           // g.DrawRectangle(pen, rect);
 
         }
 
@@ -109,7 +118,12 @@ namespace VideoSystem.Implementation
             var b = Brushes.Transparent;
 
             if (cell.CellType != CellType.Empty)
-                b = new SolidBrush(Color.FromArgb(cell.Color));
+            {
+                if (cell.CellType != CellType.Dead || (cell.Modificators[0] < 1 && cell.CellType == CellType.Dead))
+                    b = new SolidBrush(Color.FromArgb(cell.Color));
+                else                    
+                    b = new SolidBrush(Color.FromArgb(cell.Modificators[0] * 200 / 100, Color.White));
+            }
 
             return b;
         }
@@ -119,7 +133,7 @@ namespace VideoSystem.Implementation
             var pen = Pens.Transparent;
 
             if ((cell.CellType & CellType.Alive) == CellType.Alive)
-                pen = new Pen(Color.FromArgb(cell.Colors[1]),1);
+                pen = new Pen(Color.FromArgb(cell.Colors[1]), 1);
 
             if (cell.CellType == CellType.Wall)
                 pen = Pens.Black;

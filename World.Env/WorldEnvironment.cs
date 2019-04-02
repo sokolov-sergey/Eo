@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using VideoSystem;
@@ -24,7 +26,7 @@ namespace World
 
         public WorldEnvironment()
         {
-            Map = new Map(height: 100, width: 100);
+            Map = new Map(height: 100, width: 200);
             God = new TheGod(Map);
 
             CurrentVideoSystem = new WorldVideoSystem(Map);
@@ -60,7 +62,7 @@ namespace World
 
         public Cell GetCellInfo(int x, int y)
         {
-            var (cx,cy) = GetViewPort().PixelToCell(x,y);
+            var (cx, cy) = GetViewPort().PixelToCell(x, y);
 
             try
             {
@@ -105,6 +107,38 @@ namespace World
         public IViewPort GetViewPort()
         {
             return CurrentVideoSystem.GetViewPort();
+        }
+
+        public IStatistics GatherStatistic()
+        {
+            IStatistics stat = new Stats();
+
+            for (int i = 0; i < Map.Width; i++)
+                for (int j = 0; j < Map.Height; j++)
+                {
+                    var c = Map[i, j];
+                    stat.Agg(key: "Map>" + c.CellType.ToString(), val: 1);
+
+                    if ((c.CellType & CellType.Alive) == CellType.Alive)
+                    {
+                        stat.Agg($"Life>{c.Settler?.Genome?.PopulationId.ToString("D2")}", 1);
+                    }
+                }
+
+            return stat;
+        }
+    }
+
+    internal class Stats : IStatistics
+    {
+        private Dictionary<string, int> Aggr = new Dictionary<string, int>();
+
+        
+        public IReadOnlyDictionary<string, int> Aggregations => Aggr as IReadOnlyDictionary<string, int>;
+
+        public void Agg(string key, int val)
+        {
+            Aggr[key] = Aggr.ContainsKey(key) ? Aggr[key] + val : val;
         }
     }
 }

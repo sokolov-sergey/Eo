@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Reflection;
 
 namespace World.Settlers.Plants
 {
@@ -13,7 +13,21 @@ namespace World.Settlers.Plants
         public const int Photosynthesis = 1;
         public const int Breed = 2;
         public const int PopulationId = 3;
+        public const int Color1 = 4;
+        public const int Color2 = 5;
+        public const int Color3 = 6;
 
+        public static string[] Descriptor { get; private set; } = new string[7];
+        static Gens()
+        {
+            var t = typeof(Gens);
+            var flds = t.GetFields(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (var item in flds)
+            {
+                Descriptor[(int)item.GetRawConstantValue()] = item.Name;
+            }
+        }
     }
 
     public class PlantGenome : IGenome
@@ -23,11 +37,13 @@ namespace World.Settlers.Plants
 
 
         private static int CodeGen(int val) => (Rnd.Next(1, 100), val).CodeGen();
-        private static int CodeGen(int val, int rnd) => (rnd, val).CodeGen();
+        private static int CodeGen(int val, int level) => (level, val).CodeGen();
 
         private static IGenome InitDefault()
         {
-            var d = new int[] { CodeGen(Gens.PopulationId), CodeGen(Gens.Photosynthesis, Rnd.Next(0, +15)), CodeGen(Gens.Breed) };
+            var d = new int[] { CodeGen(Gens.PopulationId), CodeGen(Gens.Photosynthesis, Rnd.Next(0, +15)), CodeGen(Gens.Breed),
+                CodeGen(Gens.Color1, Rnd.Next(0, 255)),CodeGen(Gens.Color2, Rnd.Next(0, 255)), CodeGen(Gens.Color3, Rnd.Next(0, 255))
+            };
 
             return new PlantGenome(d);
         }

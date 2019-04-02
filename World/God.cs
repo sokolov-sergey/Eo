@@ -28,7 +28,7 @@ namespace World
                 for (int i = 0; i < God.Map.Height; i++)
                     for (int j = 0; j < God.Map.Width; j++)
                     {
-                        var c = God.Map[i, j];
+                        var c = God.Map[j, i];
                         var stlr = c.Settler;
                         if (stlr != null && stlr.Soul == null)
                         {
@@ -58,6 +58,7 @@ namespace World
 
             Knowledge = Spark.ActorOf(Props.Create<AbsoluteKnowledge>(this));
             Spark.EventStream.Subscribe(Knowledge, typeof(Spawn));
+            
 
             //Spark.Scheduler.ScheduleOnce(TimeSpan.FromSeconds(20), () => { Spark.EventStream.Publish(new Freeze()); });
         }

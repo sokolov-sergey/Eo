@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Util;
 using System;
+using System.Linq;
 using World.Maps;
 
 
@@ -26,14 +27,13 @@ namespace World.Settlers.Plants
 
             protected override void LifeTick(object state)
             {
-                if (Body._Cell.Settler != Body|| Body.Energy <= -15
+                if (Body._Cell.Settler != Body || Body.Energy <= -15
                     || Body.FailedSpawns > 10 || Body.LifeCyclesCount-- < 0
                     )
                 {
                     Kill();
                     return;
                 }
-
 
                 foreach (var g in Body.Genome)
                 {
@@ -63,8 +63,6 @@ namespace World.Settlers.Plants
 
         private void Die()
         {
-
-
             _Cell.CellType = CellType.Dead;
             _Cell.SetColor(0X78FFFFFF);
             _Cell.Populate(null);
@@ -73,19 +71,18 @@ namespace World.Settlers.Plants
         private Random Randomizer = new Random(DateTime.Now.Millisecond);
 
 
-        private void Feed(int lv)
+        private void Feed(float lv)
         {
-            var mpl = 0;
+            var mpl = 0.000f;
             for (int i = 0; i < Neighborhood.Length; i++)
                 if (Neighborhood[i] != null && Neighborhood[i].CellType != CellType.Empty
                     && (Neighborhood[i].CellType & CellType.Alive) == CellType.Alive)
                     mpl++;
 
-
-
-            Color = Color - (5 << 8);
+            Energy += lv / (mpl + 1.000f) - 1.000f;
+            int perc = (int)(Energy > 100 ? 100 : Energy);
+            Color = unchecked((int)((255 * perc) / 100 << 24 | Color));
             _Cell.SetColor(Color);
-            Energy += lv / (mpl + 1) - 1;
         }
 
         private Cell _Cell;
@@ -99,6 +96,13 @@ namespace World.Settlers.Plants
         public Plant(IGenome genome)
         {
             Genome = genome;
+            var c = Genome.Where(g =>
+            {
+                var gen = (g & 0xFF);
+                return gen == Gens.Color1 || gen == Gens.Color2 || gen == Gens.Color3;
+            }).ToArray();
+
+            Color = (c[0]>>8)<< 16 | (c[1] >>8)<< 8 | c[2]>>8;
         }
 
         int FailedSpawns = 0;
@@ -113,7 +117,7 @@ namespace World.Settlers.Plants
                 || (c.CellType == CellType.Dead && lv < 80)
                 || (((c.CellType & CellType.Alive) == CellType.Alive)
                         && c.Settler != null && c.Settler.Genome.DistanceBetween(this.Genome) > 20
-                        && c.Settler.Energy - 10 <= this.Energy + lv)
+                        && c.Settler.Energy  <= this.Energy + lv)
 
                 )
             {
@@ -183,7 +187,7 @@ namespace World.Settlers.Plants
 
         public Cell Cell { get => _Cell; set => SetCell(value); }
 
-        private Cell[] Neighborhood ;
+        private Cell[] Neighborhood;
 
         private void SetCell(Cell cell)
         {

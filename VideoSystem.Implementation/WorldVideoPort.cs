@@ -7,23 +7,34 @@ namespace VideoSystem.Implementation
 {
     public class WorldVideoPort : IViewPort
     {
-        private readonly Timer Timer;
+        private Timer Timer;
         private IViewDriver Driver;
 
         Size DeviceSize = new Size(800, 600);
         private int _currFps = 5;
+        private bool StopFlag = false;
 
         public WorldVideoPort(IMap map)
         {
             Driver = new ViewDriver(map);
 
-            Timer = new Timer(TickHadler, null, 1000, 1000 / MaxFPS );
+            Timer = new Timer(TickHadler);
+            Timer.Change(1000, 1000 / MaxFPS);
         }
 
 
 
         private void TickHadler(object state)
         {
+            if ((bool)StopFlag)
+            {
+                ((Timer)state).Dispose();                
+                return;
+            }
+
+            if (DeviceSize.Width <= 0 || DeviceSize.Height <= 0)
+                return;
+
             var bitmap = new Bitmap(DeviceSize.Width, DeviceSize.Height);
             var g = Graphics.FromImage(bitmap);
             try
@@ -32,6 +43,7 @@ namespace VideoSystem.Implementation
                 Driver.DrawEnvironment(g);
                 Driver.DrawCells(g);
                 Driver.DrawDebug(g);
+
                 var delay = FrameHandler(new Frame(bitmap));
                 if (delay > 0)
                 {
@@ -39,7 +51,7 @@ namespace VideoSystem.Implementation
                 }
             }
             catch { }
-            
+
         }
 
         public int MaxFPS { get { return _currFps; } set { SetFps(value); } }
@@ -47,14 +59,20 @@ namespace VideoSystem.Implementation
         private void SetFps(int value)
         {
             _currFps = value;
-            Timer.Change(1000,1000/MaxFPS);
+            if (StopFlag)
+            {
+                StopFlag = false;
+                Timer = new Timer(TickHadler);
+            }
+
+            Timer.Change(1000, 1000 / MaxFPS);
         }
 
-        public Func<Frame,int> FrameHandler { get; private set; }
+        public Func<Frame, int> FrameHandler { get; private set; }
 
-        public void ProvideFrames(Func<Frame,int> action)
+        public void ProvideFrames(Func<Frame, int> action)
         {
-            FrameHandler = action;            
+            FrameHandler = action;
         }
 
         public void ZoomIn(int x = 0)
@@ -67,9 +85,14 @@ namespace VideoSystem.Implementation
             DeviceSize = new Size(width, height);
         }
 
-        public (int x,int y) PixelToCell(int x, int y)
+        public (int x, int y) PixelToCell(int x, int y)
         {
-            return Driver.PixelToCell(x,y);
+            return Driver.PixelToCell(x, y);
+        }
+
+        public void Stop()
+        {            
+                StopFlag = true;
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using VideoSystem;
@@ -33,9 +35,16 @@ namespace Ww
             monitor1.FPS = ViewPort.MaxFPS = 24;
             monitor1.Resize += Monitor1_Resize;
             monitor1.KeyDown += Monitor1_KeyDown;
+            SeriesCheckBox.ItemCheck += SeriesCheckBox_ItemCheck;
 
 
         }
+
+        private void SeriesCheckBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+
+        }
+
         private void Monitor1_KeyDown(object sender, KeyEventArgs e)
         {
             Environment.RandomSettle();
@@ -170,14 +179,27 @@ namespace Ww
         }
 
         public List<IStatistics> StaticsticsStore = new List<IStatistics>();
+        private bool AutoRefreshChart;
 
         private void statisticTimer_Tick(object sender, EventArgs e)
         {
             var stat = Environment.GatherStatistic();
             StaticsticsStore.Add(stat);
+
+            if (AutoRefreshChart)
+                DrawMapChart();
         }
 
+
+
         private void button5_Click(object sender, EventArgs e)
+        {
+            XElement xElem = StatToXml();
+
+            xElem.Save($@"c:\temp\eo-stat-{DateTime.Now.ToString("HHmm")}-{StaticsticsStore.Count}.xml");
+        }
+
+        private XElement StatToXml()
         {
             Func<string, string> normalize = s =>
             {
@@ -196,7 +218,73 @@ namespace Ww
                 )
             );
 
-            xElem.Save($@"c:\temp\eo-stat-{DateTime.Now.ToString("HHmm")}-{StaticsticsStore.Count}.xml");
+            return xElem;
+        }
+
+        private void DrawMapChart()
+        {
+            try
+            {
+                var ds = new DataSet();
+                var lastStat = StaticsticsStore.Last();
+
+                var xml = StatToXml();
+                ds.ReadXml(xml.CreateReader());
+                var tbl = ds.Tables[0];
+
+                foreach (DataColumn item in tbl.Columns)
+                {
+                    if (!item.Caption.StartsWith("Frame"))
+                    {
+                        var contains = SeriesCheckBox.Items.Contains(item.Caption);
+                        var isLife = item.Caption.StartsWith("Life");
+                        if (!contains && (!isLife || isLife && allSpeciesCheckBox.Checked))
+                        {
+                            SeriesCheckBox.Items.Add(item.Caption);
+                            continue;
+                        }
+
+                        if (isLife && !allSpeciesCheckBox.Checked)
+                            if (contains && !lastStat.Aggregations.Keys.Contains(item.Caption.Replace("-", ">")))
+                                SeriesCheckBox.Items.Remove(item.Caption);
+                            else if (!contains && lastStat.Aggregations.Keys.Contains(item.Caption.Replace("-", ">")))
+                                SeriesCheckBox.Items.Add(item.Caption);
+                    }
+
+                }
+
+                MapChart.DataSource = tbl;
+
+                MapChart.Series.Clear();
+
+                string[] s = new string[SeriesCheckBox.CheckedItems.Count];
+
+                SeriesCheckBox.CheckedItems.CopyTo(s,0);
+
+                foreach (var item in s)
+                {
+                    ExtractSeries("Frame", item.ToString(), null, SeriesCheckBox.SelectedItem == item);
+                }
+
+            }
+            catch { }
+        }
+
+        private void ExtractSeries(string xMember, string yMember, string title = null, bool selected = false)
+        {
+            title = title ?? yMember;
+            var sr = MapChart.Series.Add(title);
+            sr.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            sr.BorderWidth = selected ? 3 : 1;
+            sr.XValueMember = xMember;
+            sr.IsXValueIndexed = true;
+            sr.YValueMembers = yMember;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            AutoRefreshChart = !AutoRefreshChart;
+            //DrawMapChart();
         }
     }
     public class ServiceStatMapper

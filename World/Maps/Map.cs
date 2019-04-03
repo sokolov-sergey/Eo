@@ -32,8 +32,8 @@ namespace World.Maps
                 for (int x = cx - ariaSize; x < cx + ariaSize; x++)
                     for (int y = cy - ariaSize; y < cy + ariaSize; y++)
                     {
-                        var (dx, dy) = (Math.Abs(x - cx), Math.Abs(y - cy));
-                        var l = (dx > dy ? dx : dy);
+                        //var (dx, dy) = (Math.Pow(x - cx,2), Math.Pow(y - cy,2));
+                        var l = Math.Sqrt(Math.Pow(x - cx, 2)+ Math.Pow(y - cy, 2)); //(dx > dy ? dx : dy);
                         l = l > 0 ? l : 1;
 
                         if (Cells[x, y].Modificators[0] < 100)

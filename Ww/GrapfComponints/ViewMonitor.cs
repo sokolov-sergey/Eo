@@ -38,7 +38,7 @@ namespace Ww.GrapfComponints
         {
             InitializeComponent();
             Paint += Monitor_Paint;
-            Timer = new System.Threading.Timer(TickHandler, null, 1000, 1000 / FPS);            
+            Timer = new System.Threading.Timer(TickHandler, null, 1000, 1000 / FPS);
         }
 
         private void TickHandler(object state)
@@ -46,13 +46,20 @@ namespace Ww.GrapfComponints
             this.Invalidate();
         }
 
-      
 
+        private readonly Font DesignFont = new Font(FontFamily.GenericSerif, 15);
 
         private void Monitor_Paint(object sender, PaintEventArgs e)
         {
             if (DesignMode)
+            {
+                var str = "Monitor";
+                var sz = e.Graphics.MeasureString(str, DesignFont);
+                e.Graphics.DrawRectangle(new Pen(Color.DarkOrange, 3), 1, 1, Width - 3, Height - 3);
+                e.Graphics.DrawString(str, DesignFont,
+                    Brushes.DarkOliveGreen, (Width / 2) - (sz.Width/2), Height / 2 - (sz.Height/2));
                 return;
+            }
 
             // if (Interlocked.CompareExchange(ref flag, 1, 0) == 0)
             {

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statisticTimer = new System.Windows.Forms.Timer(this.components);
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -41,6 +41,7 @@
             this.MapChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.frameLabel = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.borderPanel = new System.Windows.Forms.Panel();
             this.bodyPanel = new System.Windows.Forms.Panel();
@@ -51,6 +52,7 @@
             this.monitor1 = new Ww.GrapfComponints.ViewMonitor();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.saveFrameTimer = new System.Windows.Forms.Timer(this.components);
             this.tabPage2.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapChart)).BeginInit();
@@ -105,11 +107,11 @@
             this.SeriesCheckBox.Size = new System.Drawing.Size(71, 394);
             this.SeriesCheckBox.TabIndex = 8;
             // 
-            // allSpeaciesCheckBox
+            // allSpeciesCheckBox
             // 
             this.allSpeciesCheckBox.AutoSize = true;
             this.allSpeciesCheckBox.Location = new System.Drawing.Point(5, 32);
-            this.allSpeciesCheckBox.Name = "allSpeaciesCheckBox";
+            this.allSpeciesCheckBox.Name = "allSpeciesCheckBox";
             this.allSpeciesCheckBox.Size = new System.Drawing.Size(66, 17);
             this.allSpeciesCheckBox.TabIndex = 9;
             this.allSpeciesCheckBox.Text = "Show all";
@@ -131,10 +133,10 @@
             this.MapChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.Name = "ChartArea1";
-            this.MapChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.MapChart.Legends.Add(legend1);
+            chartArea3.Name = "ChartArea1";
+            this.MapChart.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.MapChart.Legends.Add(legend3);
             this.MapChart.Location = new System.Drawing.Point(3, 6);
             this.MapChart.Name = "MapChart";
             this.MapChart.Size = new System.Drawing.Size(616, 449);
@@ -157,6 +159,7 @@
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.frameLabel);
             this.panel1.Controls.Add(this.button5);
             this.panel1.Controls.Add(this.borderPanel);
             this.panel1.Controls.Add(this.button4);
@@ -167,6 +170,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(196, 94);
             this.panel1.TabIndex = 6;
+            // 
+            // frameLabel
+            // 
+            this.frameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.frameLabel.Location = new System.Drawing.Point(108, 12);
+            this.frameLabel.Name = "frameLabel";
+            this.frameLabel.Size = new System.Drawing.Size(29, 22);
+            this.frameLabel.TabIndex = 10;
+            this.frameLabel.Text = "label1";
             // 
             // button5
             // 
@@ -208,7 +220,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(136, -1);
+            this.button1.Location = new System.Drawing.Point(137, -1);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(57, 22);
             this.button1.TabIndex = 1;
@@ -230,7 +242,7 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(136, 20);
+            this.button2.Location = new System.Drawing.Point(137, 20);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(57, 22);
             this.button2.TabIndex = 1;
@@ -271,6 +283,12 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(715, 484);
             this.tabControl1.TabIndex = 7;
+            // 
+            // saveFrameTimer
+            // 
+            this.saveFrameTimer.Enabled = true;
+            this.saveFrameTimer.Interval = 500;
+            this.saveFrameTimer.Tick += new System.EventHandler(this.saveFrameTimer_Tick);
             // 
             // Form1
             // 
@@ -314,6 +332,8 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.CheckBox allSpeciesCheckBox;
+        private System.Windows.Forms.Label frameLabel;
+        private System.Windows.Forms.Timer saveFrameTimer;
     }
 }
 

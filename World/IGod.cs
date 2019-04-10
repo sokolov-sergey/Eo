@@ -7,6 +7,8 @@ using World.Settlers.Plants;
 
 namespace World
 {
+    public delegate object Spark(object organism);
+
     public class MessageOfTheGod
     {
     }

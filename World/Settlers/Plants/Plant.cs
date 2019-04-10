@@ -12,6 +12,8 @@ namespace World.Settlers.Plants
     {
         public class PlantSoul : SoulActor<Plant>
         {
+            
+
             public PlantSoul(Plant settler) : base(settler)
             {
             }
@@ -50,7 +52,9 @@ namespace World.Settlers.Plants
                         if (s != null)
                         {
                             Body.Energy /= 4;
-                            Context.System.EventStream.Publish(new Spawn(s));
+                            s.SparkSoul(Context.System);
+                            //Context.System.EventStream.Publish(new Spawn(s));
+                            
                         }
                     }
                 }
@@ -118,7 +122,6 @@ namespace World.Settlers.Plants
                 || (((c.CellType & CellType.Alive) == CellType.Alive)
                         && c.Settler != null && c.Settler.Genome.DistanceBetween(this.Genome) > 20
                         && c.Settler.Energy <= this.Energy + lv)
-
                 )
             {
                 this.Energy /= 3;
@@ -212,6 +215,12 @@ namespace World.Settlers.Plants
             _Cell.CellType = CellType.Alive | CellType.Plant;
             _Cell.SetColor(254 << 24 | (this.Genome.PopulationId * 255 / 100) << 16, 1);
             _Cell.Populate(this);
+        }
+
+        public ISettler SparkSoul(IUntypedActorContext spark)
+        {
+            Soul = spark.ActorOf(Props.Create<PlantSoul>(this));
+            return this;
         }
 
         public ISettler SparkSoul(ActorSystem spark)

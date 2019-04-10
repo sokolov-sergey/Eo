@@ -26,7 +26,7 @@ namespace World
 
         public WorldEnvironment()
         {
-            Map = new Map(height: 100, width: 100);
+            Map = new Map(height: 300, width: 500);
             God = new TheGod(Map);
 
             CurrentVideoSystem = new WorldVideoSystem(Map);
@@ -41,16 +41,17 @@ namespace World
             if ((Map[x, y].CellType & CellType.Alive) == CellType.Alive)
                 return (x, y);
 
-            var s = CreateASettler(null);
+            var s = CreateASettler(null,x,y);
 
-            God.PopulateCell(x, y, s);
 
             return (x, y);
         }
 
-        private ISettler CreateASettler(object p)
+        private ISettler CreateASettler(object p, int x, int y)
         {
             var s = new Plant();
+            s.Map = Map;
+            s.Cell = Map[x, y];
             return God.CreateLife(s);
         }
 

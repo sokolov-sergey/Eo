@@ -23,6 +23,8 @@ namespace Ww
         private IViewPort ViewPort;
         private WorldEnvironment Environment;
 
+        readonly string SaveFramePath = $@"img\{DateTime.Now.ToString("HHmmss")}";
+
         public Form1()
         {
             Environment = new WorldEnvironment();
@@ -30,14 +32,28 @@ namespace Ww
             ViewPort = Environment.GetViewPort();
 
             InitializeComponent();
-            ViewPort.ProvideFrames(a => monitor1.PushFrame(a));
+            ViewPort.ProvideFrames(a => { SaveFrame(a); return monitor1.PushFrame(a); });
             ViewPort.SetDeviceSize(monitor1.Width, monitor1.Height);
             monitor1.FPS = ViewPort.MaxFPS = 24;
             monitor1.Resize += Monitor1_Resize;
             monitor1.KeyDown += Monitor1_KeyDown;
             SeriesCheckBox.ItemCheck += SeriesCheckBox_ItemCheck;
 
+            if (!Directory.Exists(SaveFramePath))
+                Directory.CreateDirectory(SaveFramePath);
 
+        }
+
+        int frameNum = 100000;
+        private void SaveFrame(Frame f)
+        {
+            if (f.IsEmpty || !mustSave)
+                return;
+
+            mustSave = false;
+            var img = (Image)f.Image.Clone();
+
+            img.Save($@"{SaveFramePath}\{frameNum++}.png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
         private void SeriesCheckBox_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -124,14 +140,14 @@ namespace Ww
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            var fps = ViewPort.MaxFPS + 5;
+            var fps = ViewPort.MaxFPS + 1;
             fps = fps >= 60 ? 60 : fps;
             SetFps(fps);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var fps = ViewPort.MaxFPS - 5;
+            var fps = ViewPort.MaxFPS - 1;
             fps = fps <= 1 ? 1 : fps;
             SetFps(fps);
         }
@@ -139,6 +155,7 @@ namespace Ww
         private void SetFps(int fps)
         {
             ViewPort.MaxFPS = fps;
+            frameLabel.Text = ViewPort.MaxFPS.ToString();
             //monitor1.FPS = fps;
         }
 
@@ -180,6 +197,7 @@ namespace Ww
 
         public List<IStatistics> StaticsticsStore = new List<IStatistics>();
         private bool AutoRefreshChart;
+        private bool mustSave;
 
         private void statisticTimer_Tick(object sender, EventArgs e)
         {
@@ -259,7 +277,7 @@ namespace Ww
 
                 string[] s = new string[SeriesCheckBox.CheckedItems.Count];
 
-                SeriesCheckBox.CheckedItems.CopyTo(s,0);
+                SeriesCheckBox.CheckedItems.CopyTo(s, 0);
 
                 foreach (var item in s)
                 {
@@ -286,10 +304,11 @@ namespace Ww
             AutoRefreshChart = !AutoRefreshChart;
             //DrawMapChart();
         }
+
+        private void saveFrameTimer_Tick(object sender, EventArgs e)
+        {
+            mustSave = true;
+        }
     }
-    public class ServiceStatMapper
-    {
-        [XmlAttribute]
-        public static string Key;
-    }
+
 }

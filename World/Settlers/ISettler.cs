@@ -20,6 +20,7 @@ namespace World.Settlers
 
         int Age { get; }
 
+        ISettler SparkSoul(IUntypedActorContext spark);
         ISettler SparkSoul(ActorSystem spark);
 
     }

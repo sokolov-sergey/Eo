@@ -26,7 +26,7 @@ namespace World.Maps
                     Cells[x, y] = new Cell(CellType.Empty, x, y);
 
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var (cx, cy) = (r.Next(10, Width - 10), r.Next(10, Height - 10));
                 for (int x = cx - ariaSize; x < cx + ariaSize; x++)

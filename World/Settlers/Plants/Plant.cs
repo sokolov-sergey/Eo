@@ -12,7 +12,7 @@ namespace World.Settlers.Plants
     {
         public class PlantSoul : SoulActor<Plant>
         {
-            
+
 
             public PlantSoul(Plant settler) : base(settler)
             {
@@ -54,7 +54,7 @@ namespace World.Settlers.Plants
                             Body.Energy /= 4;
                             s.SparkSoul(Context.System);
                             //Context.System.EventStream.Publish(new Spawn(s));
-                            
+
                         }
                     }
                 }
@@ -75,15 +75,25 @@ namespace World.Settlers.Plants
         private Random Randomizer = new Random(DateTime.Now.Millisecond);
 
 
-        private void Feed(float lv)
+        private double CalculateMultiply(params double[] args)
         {
-            var mpl = 0.000f;
+            var mpl = 0.0d;
             for (int i = 0; i < Neighborhood.Length; i++)
                 if (Neighborhood[i] != null && Neighborhood[i].CellType != CellType.Empty
                     && (Neighborhood[i].CellType & CellType.Alive) == CellType.Alive)
                     mpl++;
+            return mpl;
+        }
 
-            Energy += (lv + _Cell.Modificators[0]) / (mpl + 1.000f) - 1.000f;
+        private void Feed(double lv)
+        {
+            var mpl = CalculateMultiply();            
+            var res = (float)(((lv + _Cell.Modificators[0]) / ((mpl * 1.5f ) + 1.000f)) - 1.000f);
+            if (mpl-(_Cell.Modificators[0]) > 28)
+                Energy -= res/4;
+            else 
+                Energy += res;
+
             int perc = (int)(Energy > 100 ? 100 : Energy);
             Color = unchecked((int)((255 * perc) / 100 << 24 | Color));
             _Cell.SetColor(Color);
@@ -201,12 +211,14 @@ namespace World.Settlers.Plants
 
         private void SetCell(Cell cell)
         {
-            Neighborhood = new Cell[7 * 7 - 1];
+            int zoneSize = 3;
+
+            Neighborhood = new Cell[(2*(zoneSize+1)) * (2*(zoneSize+1)) - 1];
             var n = 0;
-            for (int i = -3; i < 4; i++)
-                for (int j = -3; j < 4; j++)
+            for (int i = -zoneSize; i < zoneSize+1; i++)
+                for (int j = -zoneSize; j < zoneSize + 1; j++)
                 {
-                    if (i != 0 && j != 0)
+                    if (!(i == 0 && j == 0))
                         Neighborhood[n++] = PickACell(cell.X + i, cell.Y + j);
                 }
 

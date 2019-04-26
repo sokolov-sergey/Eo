@@ -26,7 +26,7 @@ namespace World
 
         public WorldEnvironment()
         {
-            Map = new Map(height: 300, width: 500);
+            Map = new Map(height: 100, width: 100);
             God = new TheGod(Map);
 
             CurrentVideoSystem = new WorldVideoSystem(Map);

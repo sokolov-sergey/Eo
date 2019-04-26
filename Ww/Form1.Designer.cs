@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statisticTimer = new System.Windows.Forms.Timer(this.components);
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -133,10 +133,10 @@
             this.MapChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea3.Name = "ChartArea1";
-            this.MapChart.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.MapChart.Legends.Add(legend3);
+            chartArea1.Name = "ChartArea1";
+            this.MapChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.MapChart.Legends.Add(legend1);
             this.MapChart.Location = new System.Drawing.Point(3, 6);
             this.MapChart.Name = "MapChart";
             this.MapChart.Size = new System.Drawing.Size(616, 449);
@@ -286,7 +286,6 @@
             // 
             // saveFrameTimer
             // 
-            this.saveFrameTimer.Enabled = true;
             this.saveFrameTimer.Interval = 500;
             this.saveFrameTimer.Tick += new System.EventHandler(this.saveFrameTimer_Tick);
             // 
